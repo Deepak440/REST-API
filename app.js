@@ -22,7 +22,7 @@ const articleSchema = new mongoose.Schema({
 // Create Model
 const Article = mongoose.model('Article', articleSchema);
 
-
+// Requesting targeting to all articles
 app.route("/articles")
     .get(function (req, res) {
         Article.find(function (err, result) {
@@ -61,6 +61,68 @@ app.route("/articles")
         })
 
     });
+
+ // Request targetting to specific article    
+ app.route("/articles/:articletitle")
+ .get(function(req , res)
+ {
+     Article.findOne({title : req.params.articletitle} , function(err , result)
+     {
+         if(!err)
+         {
+             res.send(result);
+         }
+         else
+         {
+             res.send("No articles are matching");
+         }
+
+     });
+
+ })
+ .put(function(req ,res)
+ {
+     Article.update({title : req.params.articletitle},{title : req.body.title , content : req.body.content} ,function(err)
+     {
+         if(!err){
+             res.send("Successfully updated");
+         }
+         else
+         {
+             res.send(err);
+         }
+     } );
+
+ })
+ .patch(function(req ,res)
+ {
+     Article.update({title : req.params.articletitle} , {$set : req.body} , function(err)
+     {
+         if(!err)
+         {
+             res.send("Successfully updated");
+         }
+         else
+         {
+             res.send(err);
+         }
+     });
+ })
+
+ .delete(function(req ,res)
+ {
+     Article.deleteOne({title : req.params.articletitle} ,function(err)
+     {
+         if(!err)
+         {
+             res.send("Successfully deleted");
+         }
+         else
+         {
+             res.send(err);
+         }
+     })
+ })
 
 app.listen(3000, function (req, res) {
     console.log("Server is running at 3000");
